@@ -1,14 +1,14 @@
-// +build !gccgo
-
 package reflect2
 
 import (
+	"errors"
 	"reflect"
 	"sync"
 	"unsafe"
 )
 
 // typelinks2 for 1.7 ~
+//
 //go:linkname typelinks2 reflect.typelinks
 func typelinks2() (sections []unsafe.Pointer, offset [][]int32)
 
@@ -54,17 +54,25 @@ type emptyInterface struct {
 }
 
 // TypeByName return the type by its name, just like Class.forName in java
-func TypeByName(typeName string) Type {
+func TypeByName(typeName string) (Type, error) {
+	t, ok := types[typeName]
+	if !ok {
+		return nil, errors.New("invalid type name")
+	}
 	initOnce.Do(discoverTypes)
-	return Type2(types[typeName])
+	return Type2(t), nil
 }
 
 // TypeByPackageName return the type by its package and name
-func TypeByPackageName(pkgPath string, name string) Type {
+func TypeByPackageName(pkgPath string, name string) (Type, error) {
 	initOnce.Do(discoverTypes)
-	pkgTypes := packages[pkgPath]
-	if pkgTypes == nil {
-		return nil
+	pkgTypes, ok := packages[pkgPath]
+	if !ok || pkgTypes == nil {
+		return nil, errors.New("invalid package name")
 	}
-	return Type2(pkgTypes[name])
+	pkg, ok := pkgTypes[name]
+	if !ok {
+		return nil, errors.New("invalid type name")
+	}
+	return Type2(pkg), nil
 }
