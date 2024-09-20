@@ -55,11 +55,11 @@ type emptyInterface struct {
 
 // TypeByName return the type by its name, just like Class.forName in java
 func TypeByName(typeName string) (Type, error) {
+	initOnce.Do(discoverTypes)
 	t, ok := types[typeName]
 	if !ok {
 		return nil, errors.New("invalid type name")
 	}
-	initOnce.Do(discoverTypes)
 	return Type2(t), nil
 }
 
