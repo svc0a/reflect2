@@ -2,6 +2,7 @@ package reflect2
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"sync"
 	"unsafe"
@@ -17,6 +18,11 @@ var initOnce sync.Once
 
 var types map[string]reflect.Type
 var packages map[string]map[string]reflect.Type
+
+func Register[T any]() {
+	t := reflect.TypeFor[T]()
+	types[fmt.Sprintf("%s.%s", t.PkgPath(), t.Name())] = t
+}
 
 // discoverTypes initializes types and packages
 func discoverTypes() {
