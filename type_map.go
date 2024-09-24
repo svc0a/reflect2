@@ -16,8 +16,8 @@ func typelinks2() (sections []unsafe.Pointer, offset [][]int32)
 // initOnce guards initialization of types and packages
 var initOnce sync.Once
 
-var types map[string]reflect.Type
-var packages map[string]map[string]reflect.Type
+var types = map[string]reflect.Type{}
+var packages = map[string]map[string]reflect.Type{}
 
 func Register[T any]() {
 	t := reflect.TypeFor[T]()
@@ -26,9 +26,6 @@ func Register[T any]() {
 
 // discoverTypes initializes types and packages
 func discoverTypes() {
-	types = make(map[string]reflect.Type)
-	packages = make(map[string]map[string]reflect.Type)
-
 	loadGoTypes()
 }
 
