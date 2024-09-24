@@ -24,6 +24,11 @@ func Register[T any]() {
 	types[fmt.Sprintf("%s.%s", t.PkgPath(), t.Name())] = t
 }
 
+func Register2(in any) {
+	t := reflect.TypeOf(in)
+	types[fmt.Sprintf("%s.%s", t.PkgPath(), t.Name())] = t
+}
+
 // discoverTypes initializes types and packages
 func discoverTypes() {
 	loadGoTypes()
